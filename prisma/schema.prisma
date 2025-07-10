@@ -1,17 +1,66 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Brands {
+  id         String    @id
+  name       String
+  brandValue Float
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime
+  Product    Product[]
+}
+
+model Cart {
+  id        String      @id
+  createdAt DateTime    @default(now())
+  updatedAt DateTime
+  userId    String      @unique
+  Users     Users       @relation(fields: [userId], references: [id])
+  CartItems CartItems[]
+}
+
+model CartItems {
+  id        String   @id
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  cartId    String
+  productId String
+  Cart      Cart     @relation(fields: [cartId], references: [id])
+  Product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Orders {
+  id         String   @id
+  totalPrice Float
+  status     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  userId     String
+  Users      Users    @relation(fields: [userId], references: [id])
+}
+
+model Product {
+  id          String      @id
+  name        String
+  description String
+  stock       Int
+  price       Int
+  category    String
+  imageUrl    String
+  discount    Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  brandId     String
+  CartItems   CartItems[]
+  Brands      Brands      @relation(fields: [brandId], references: [id])
 }
 
 model Users {
@@ -22,71 +71,6 @@ model Users {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  orders    Orders[]
-  cart      Cart?
+  Cart      Cart?
+  Orders    Orders[]
 }
-
-model Product {
-  id          String       @id @default(cuid())
-  name        String
-  description String
-  stock       Int
-  price       Int
-  category    String
-  imageUrl    String
-  discount    Int
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  brandId     String
-  brand       Brands       @relation(fields: [brandId], references: [id])
-
-  cartItems   CartItems[]
-}
-
-model Brands {
-  id         String    @id @default(cuid())
-  name       String
-  brandValue Float
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  products   Product[]
-}
-
-model Orders {
-  id         String   @id @default(cuid())
-  totalPrice Float
-  status     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  userId     String
-  user       Users    @relation(fields: [userId], references: [id])
-}
-
-model CartItems {
-  id         String   @id @default(cuid())
-  quantity   Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  cartId     String
-  cart       Cart     @relation(fields: [cartId], references: [id])
-
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id])
-}
-
-model Cart {
-  id         String      @id @default(cuid())
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-
-  userId     String      @unique
-  user       Users       @relation(fields: [userId], references: [id])
-
-  cartItems  CartItems[]
-}
-
