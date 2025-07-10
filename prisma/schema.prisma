@@ -13,3 +13,80 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Users {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String?
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Orders[]
+  cart      Cart?
+}
+
+model Product {
+  id          String       @id @default(cuid())
+  name        String
+  description String
+  stock       Int
+  price       Int
+  category    String
+  imageUrl    String
+  discount    Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  brandId     String
+  brand       Brands       @relation(fields: [brandId], references: [id])
+
+  cartItems   CartItems[]
+}
+
+model Brands {
+  id         String    @id @default(cuid())
+  name       String
+  brandValue Float
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  products   Product[]
+}
+
+model Orders {
+  id         String   @id @default(cuid())
+  totalPrice Float
+  status     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId     String
+  user       Users    @relation(fields: [userId], references: [id])
+}
+
+model CartItems {
+  id         String   @id @default(cuid())
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  cartId     String
+  cart       Cart     @relation(fields: [cartId], references: [id])
+
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model Cart {
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  userId     String      @unique
+  user       Users       @relation(fields: [userId], references: [id])
+
+  cartItems  CartItems[]
+}
+
