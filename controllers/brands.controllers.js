@@ -1,6 +1,20 @@
 import { PrismaClient } from "@prisma/client";
+import { brands } from "../constants/brands.js";
 
 const prisma = new PrismaClient;
+
+// const createMultipleBrands = async(req, res) => {
+//   try {
+//     const result = await prisma.brands.createMany({
+//       data: brands,
+//       skipDuplicates: true, 
+//     })
+//     return res.status(200).send(`${result.count} brands inserted successfully`);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send("cannot post these brands");
+//   }
+// }
 
 const createBrand = async(req, res) => {
     const { name, brandValue } = req.body;
@@ -67,4 +81,4 @@ const deleteBrand = async (req, res) => {
   }
 };
 
-export {createBrand, getAllBrands, getBrandById, updateBrand, deleteBrand};
+export { createBrand, getAllBrands, getBrandById, updateBrand, deleteBrand };

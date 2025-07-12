@@ -1,0 +1,19 @@
+Base URL = localhost:3000/api
+
+1. User:- 
+
+    Route --> /user/  --> fetches all users (get)
+    Route --> /user/  --> user signup (post)
+    Route --> /user/login --> login user (will add)
+
+2. Brands:- 
+
+    Route --> /brand/create --> Create single brand (post)
+    Route --> /brand/ --> Fetches all brands from DB (get)
+    Route --> /brand/:id --> Fetches brand by ID (get)
+    Route --> /brand/:id --> Updates brand by ID (put)
+    Route --> /brand/:id --> Deletes brand by ID (delete)
+
+3. Products:- 
+
+    Route --> /product/  --> Get All products (get)

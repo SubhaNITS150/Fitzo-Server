@@ -8,5 +8,6 @@ brandRouter.get('/', getAllBrands);
 brandRouter.get('/:id', getBrandById);
 brandRouter.put('/:id', updateBrand);
 brandRouter.delete('/:id', deleteBrand);
+// brandRouter.post('/create/many', createMultipleBrands);
 
 export default brandRouter;
