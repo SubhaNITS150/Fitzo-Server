@@ -67,4 +67,43 @@ const addUser = async (req, res) => {
   }
 };
 
-export { addUser, getUsers };
+const loginUser = async(req, res) => {
+  const {email, password} = req.body;
+
+  try {
+    if (!email) {
+      return res.send("Email cannot be empty");
+    }
+
+    if (!password) {
+      return res.send("Password cannot be empty");
+    }
+
+    const existingUser = await prisma.user.findUnique(
+        {where : { email: email.toLowerCase() }},
+    )
+
+    if(!existingUser) {
+      return res.send("User does not exists, Sign Up");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+    if (!isPasswordValid) {
+      return res.status(401).send("Invalid password");
+    }
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: existingUser.id,
+        email: existingUser.email,
+        name: existingUser.name,
+      },
+    });
+
+  } catch (e) {
+    return res.json({error: e.message});
+  }
+}
+
+export { addUser, getUsers, loginUser };
