@@ -67,43 +67,38 @@ const addUser = async (req, res) => {
   }
 };
 
-const loginUser = async(req, res) => {
-  const {email, password} = req.body;
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    if (!email) {
-      return res.send("Email cannot be empty");
-    }
+    if (!email) return res.status(400).send("Email cannot be empty");
+    if (!password) return res.status(400).send("Password cannot be empty");
 
-    if (!password) {
-      return res.send("Password cannot be empty");
-    }
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const existingUser = await prisma.users.findUnique(
-        {where : { email: email.toLowerCase() }},
-    )
+    const existingUser = await prisma.users.findUnique({
+      where: { email: normalizedEmail },
+    });
 
-    if(!existingUser) {
-      return res.send("User does not exists, Sign Up");
-    }
+    if (!existingUser)
+      return res.status(404).send("User does not exist, Sign Up");
 
     const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-    if (!isPasswordValid) {
-      return res.status(401).send("Invalid password");
-    }
+    if (!isPasswordValid) return res.status(401).send("Invalid password");
 
     return res.status(200).json({
       message: "Login successful",
-      users: {
+      user: {
         id: existingUser.id,
         email: existingUser.email,
-        name: existingUser.name,
+        firstName: existingUser.firstName,
+        lastName: existingUser.lastName,
       },
     });
-
   } catch (e) {
-    return res.json({error: e.message});
+    return res.status(500).json({ error: e.message });
   }
-}
+};
+
 
 export { addUser, getUsers, loginUser };
