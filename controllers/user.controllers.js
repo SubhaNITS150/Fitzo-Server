@@ -79,7 +79,7 @@ const loginUser = async(req, res) => {
       return res.send("Password cannot be empty");
     }
 
-    const existingUser = await prisma.user.findUnique(
+    const existingUser = await prisma.users.findUnique(
         {where : { email: email.toLowerCase() }},
     )
 
